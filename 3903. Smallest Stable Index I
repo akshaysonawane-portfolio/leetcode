@@ -1,0 +1,14 @@
+class Solution:
+    def firstStableIndex(self, nums: list[int], k: int) -> int:
+        n = len(nums)
+        instable_score = []
+        for i in range(len(nums)):
+            if i==0:
+                instable_score.append(nums[0]- min(nums[i:n]))
+            if i != 0:
+                instable_score.append(max(nums[0:i]) - min(nums[i:n]))
+        for i,val in enumerate(instable_score):
+            if val <= k:
+                return i
+        return -1
+        
