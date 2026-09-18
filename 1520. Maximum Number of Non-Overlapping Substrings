@@ -1,0 +1,51 @@
+class Solution:
+    def maxNumOfSubstrings(self, s: str):
+        
+        # Step 1: Find first and last occurrence
+        first = {}
+        last = {}
+
+        for i, ch in enumerate(s):
+            if ch not in first:
+                first[ch] = i
+            last[ch] = i
+
+        intervals = []
+
+        # Step 2: Create a valid interval for each character
+        for ch in first:
+            left = first[ch]
+            right = last[ch]
+
+            i = left
+            valid = True
+
+            while i <= right:
+                current = s[i]
+
+                # This character appeared before our interval
+                if first[current] < left:
+                    valid = False
+                    break
+
+                # Expand the interval if necessary
+                right = max(right, last[current])
+
+                i += 1
+
+            if valid:
+                intervals.append([left, right])
+
+        # Step 3: Sort by ending position
+        intervals.sort(key=lambda x: x[1])
+
+        # Step 4: Greedily select non-overlapping intervals
+        result = []
+        previous_end = -1
+
+        for left, right in intervals:
+            if left > previous_end:
+                result.append(s[left:right + 1])
+                previous_end = right
+
+        return result
