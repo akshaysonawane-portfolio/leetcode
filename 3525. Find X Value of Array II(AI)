@@ -1,0 +1,98 @@
+class Solution:
+    def resultArray(self, nums, k, queries):
+        n = len(nums)
+
+        # Each node:
+        # [product of segment % k, counts of prefix products]
+        tree = [[1, [0] * k] for _ in range(4 * n)]
+
+        def merge(left, right):
+            lp, lc = left
+            rp, rc = right
+
+            prod = (lp * rp) % k
+
+            cnt = lc[:]
+
+            # Prefix = entire left + prefix of right
+            for r in range(k):
+                cnt[(lp * r) % k] += rc[r]
+
+            return [prod, cnt]
+
+        def build(node, l, r):
+            if l == r:
+                p = nums[l] % k
+
+                tree[node][0] = p
+                tree[node][1][p] = 1
+                return
+
+            mid = (l + r) // 2
+
+            build(node * 2, l, mid)
+            build(node * 2 + 1, mid + 1, r)
+
+            tree[node] = merge(
+                tree[node * 2],
+                tree[node * 2 + 1]
+            )
+
+        def update(node, l, r, idx, value):
+            if l == r:
+                p = value % k
+
+                tree[node][0] = p
+                tree[node][1] = [0] * k
+                tree[node][1][p] = 1
+                return
+
+            mid = (l + r) // 2
+
+            if idx <= mid:
+                update(node * 2, l, mid, idx, value)
+            else:
+                update(node * 2 + 1, mid + 1, r, idx, value)
+
+            tree[node] = merge(
+                tree[node * 2],
+                tree[node * 2 + 1]
+            )
+
+        def query(node, l, r, ql):
+            # Completely before start
+            if r < ql:
+                return None
+
+            # Completely inside [ql, n-1]
+            if ql <= l:
+                return tree[node]
+
+            mid = (l + r) // 2
+
+            left = query(node * 2, l, mid, ql)
+            right = query(node * 2 + 1, mid + 1, r, ql)
+
+            if left is None:
+                return right
+
+            if right is None:
+                return left
+
+            return merge(left, right)
+
+        build(1, 0, n - 1)
+
+        result = []
+
+        for index, value, start, x in queries:
+
+            # Persistent update
+            update(1, 0, n - 1, index, value)
+
+            # Information for nums[start:]
+            node = query(1, 0, n - 1, start)
+
+            result.append(node[1][x])
+
+        return result
