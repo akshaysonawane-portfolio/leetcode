@@ -1,0 +1,50 @@
+class Solution:
+    def hasValidPath(self, grid: List[List[str]]) -> bool:
+
+        m = len(grid)
+        n = len(grid[0])
+
+        # Total path length must be even
+        if (m + n - 1) % 2 == 1:
+            return False
+
+        memo = {}
+
+        def dfs(row, col, balance):
+
+            # Process current cell
+            if grid[row][col] == '(':
+                balance += 1
+            else:
+                balance -= 1
+
+            # Balance cannot become negative
+            if balance < 0:
+                return False
+
+            # Reached destination
+            if row == m - 1 and col == n - 1:
+                return balance == 0
+
+            # Same state already calculated
+            state = (row, col, balance)
+
+            if state in memo:
+                return memo[state]
+
+            # Move down
+            down = False
+            if row + 1 < m:
+                down = dfs(row + 1, col, balance)
+
+            # Move right
+            right = False
+            if col + 1 < n:
+                right = dfs(row, col + 1, balance)
+
+            # Save result
+            memo[state] = down or right
+
+            return memo[state]
+
+        return dfs(0, 0, 0)
