@@ -1,0 +1,21 @@
+class Solution:
+    def maxDepthAfterSplit(self, seq: str) -> list[int]:
+        count = 0
+        answer = []
+        for char in seq:
+            if char == "(":
+                count +=1
+                if count%2==1:
+                    answer.append(0)
+                else:
+                    answer.append(1)
+
+            elif char == ")":
+                
+                if count%2 == 1:
+                    answer.append(0)
+                else:
+                    answer.append(1)
+                
+                count -= 1
+        return answer
