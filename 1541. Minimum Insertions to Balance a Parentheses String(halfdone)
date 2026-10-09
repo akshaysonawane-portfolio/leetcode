@@ -1,0 +1,31 @@
+class Solution:
+    def minInsertions(self, s: str) -> int:
+        insertions = 0
+        open_bracket = 0
+        i = 0
+
+        while i < len(s):
+            if s[i] == "(":
+                open_bracket += 1
+                i += 1
+
+            else:
+                # Check whether the next character is also ')'
+                if i + 1 < len(s) and s[i + 1] == ")":
+                    i += 2
+                else:
+                    # Insert a ')' to complete the pair
+                    insertions += 1
+                    i += 1
+
+                # Match the closing pair with an opening bracket
+                if open_bracket > 0:
+                    open_bracket -= 1
+                else:
+                    # Insert an '(' because no opening bracket exists
+                    insertions += 1
+
+        # Each unmatched '(' needs two closing brackets
+        insertions += open_bracket * 2
+
+        return insertions
