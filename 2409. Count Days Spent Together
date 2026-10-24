@@ -1,0 +1,17 @@
+class Solution:
+    def countDaysTogether(self, arriveAlice: str, leaveAlice: str, arriveBob: str, leaveBob: str) -> int:
+
+        from datetime import datetime
+        arrivealice = datetime.strptime(arriveAlice, "%m-%d")
+        day_number_aa = arrivealice.timetuple().tm_yday
+        leavealice = datetime.strptime(leaveAlice, "%m-%d")
+        day_number_la = leavealice.timetuple().tm_yday
+        arrivebob = datetime.strptime(arriveBob, "%m-%d")
+        day_number_ab = arrivebob.timetuple().tm_yday
+        leavebob = datetime.strptime(leaveBob, "%m-%d")
+        day_number_lb = leavebob.timetuple().tm_yday
+
+        overlap_arrive = max(day_number_aa, day_number_ab)
+        overlap_leave = min(day_number_la, day_number_lb)
+        return max(0, overlap_leave - overlap_arrive + 1)
+     
